@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marge Calculator - Tweedehands Occasions</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        label { font-weight: bold; }
+        input { margin-bottom: 10px; padding: 5px; width: 100%; }
+        button { background: #007bff; color: white; padding: 10px; border: none; cursor: pointer; width: 100%; }
+        button:hover { background: #0056b3; }
+        .result { font-weight: bold; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <h2>Marge Berekening voor Tweedehands Occasions</h2>
+
+    <label for="inkoop">Inkoopprijs Occasion (€):</label>
+    <input type="number" id="inkoop" placeholder="Bijv. 200" step="0.01">
+
+    <label for="verkoop">Verkoopprijs Occasion (€):</label>
+    <input type="number" id="verkoop" placeholder="Bijv. 350" step="0.01">
+
+    <button onclick="berekenMarge()">Bereken Marge</button>
+
+    <div class="result" id="result"></div>
+
+    <script>
+        function berekenMarge() {
+            let inkoop = parseFloat(document.getElementById("inkoop").value);
+            let verkoop = parseFloat(document.getElementById("verkoop").value);
+            let btwTarief = 21; // 21% btw
+
+            if (isNaN(inkoop) || isNaN(verkoop) || inkoop >= verkoop) {
+                document.getElementById("result").innerHTML = "<span style='color: red;'>Voer geldige waarden in!</span>";
+                return;
+            }
+
+            let marge = verkoop - inkoop;
+            let btwBedrag = (marge * btwTarief) / (100 + btwTarief);
+            let nettoMarge = marge - btwBedrag;
+
+            document.getElementById("result").innerHTML = `
+                <p>Marge: <strong>€${marge.toFixed(2)}</strong></p>
+                <p>Btw-bedrag (21% over marge): <strong>€${btwBedrag.toFixed(2)}</strong></p>
+                <p>Marge na aftrek btw: <strong>€${nettoMarge.toFixed(2)}</strong></p>
+            `;
+        }
+    </script>
+
+</body>
+</html>

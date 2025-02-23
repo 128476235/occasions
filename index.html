@@ -3,52 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marge Calculator - Tweedehands Occasions</title>
+    <title>Saldo Checker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        label { font-weight: bold; }
-        input { margin-bottom: 10px; padding: 5px; width: 100%; }
-        button { background: #007bff; color: white; padding: 10px; border: none; cursor: pointer; width: 100%; }
-        button:hover { background: #0056b3; }
-        .result { font-weight: bold; margin-top: 10px; }
+        body { font-family: 'Poppins', sans-serif; text-align: center; margin: 50px; background-color: #f8f9fa; color: black; }
+        input { margin: 20px auto; padding: 8px; font-size: 14px; border: 2px solid black; border-radius: 5px; width: 6cm; background-color: black; color: black; display: block; text-align: center; }
+        input:focus { outline: none; color: white; }
+        .container { width: 8.6cm; height: 5.4cm; margin: 50px auto; background: black; padding: 10px; border-radius: 10px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); text-align: center; display: flex; flex-direction: column; justify-content: center; position: relative; color: black; transition: background 0.3s ease; }
+        .saldo-text { font-size: 16px; margin: 5px 0; display: flex; justify-content: space-between; }
+        .naam { font-weight: 700; font-size: 20px; text-align: left; }
+        .bedrag { font-weight: 400; font-size: 20px; color: black; text-align: right; }
+        .product-container { margin-top: 10px; padding-top: 5px; border-top: 3px solid black; text-align: left; }
+        .item { font-weight: 400; font-size: 14px; color: black; display: flex; justify-content: space-between; align-items: center; margin: 2px 0; }
+        .item-name { text-align: left; display: flex; align-items: center; }
+        .status-circle { width: 8px; height: 8px; border-radius: 50%; margin-left: 8px; display: inline-block; }
+        .item-price { text-align: right; display: flex; align-items: center; }
     </style>
 </head>
 <body>
-
-    <h2>Marge Berekening voor Tweedehands Occasions</h2>
-
-    <label for="inkoop">Inkoopprijs Occasion (€):</label>
-    <input type="number" id="inkoop" placeholder="Bijv. 200" step="0.01">
-
-    <label for="verkoop">Verkoopprijs Occasion (€):</label>
-    <input type="number" id="verkoop" placeholder="Bijv. 350" step="0.01">
-
-    <button onclick="berekenMarge()">Bereken Marge</button>
-
-    <div class="result" id="result"></div>
-
+    <div id="inputScreen" class="container">
+        <input type="text" id="klantnummer" placeholder="Kaartnummer" class="kaartnummer" oninput="checkInputLength()">
+    </div>
+    
+    <div id="saldoMessage" class="container" style="display: none; background: white; color: black;">
+        <p class="saldo-text"><span class="naam"></span> <span class="bedrag"></span></p>
+        <div class="product-container" id="productContainer"></div>
+    </div>
+    
     <script>
-        function berekenMarge() {
-            let inkoop = parseFloat(document.getElementById("inkoop").value);
-            let verkoop = parseFloat(document.getElementById("verkoop").value);
-            let btwTarief = 21; // 21% btw
-
-            if (isNaN(inkoop) || isNaN(verkoop) || inkoop >= verkoop) {
-                document.getElementById("result").innerHTML = "<span style='color: red;'>Voer geldige waarden in!</span>";
-                return;
+        function checkInputLength() {
+            let inputField = document.getElementById('klantnummer');
+            if (inputField.value.length >= 5) {
+                toonSaldo();
             }
+        }
 
-            let marge = verkoop - inkoop;
-            let btwBedrag = (marge * btwTarief) / (100 + btwTarief);
-            let nettoMarge = marge - btwBedrag;
+        let saldoData = {
+            "12345": { "naam": "Jan", "saldo": "50.00", "items": [["Product A", 10, 1], ["Product B", 20, 2]] },
+            "67890": { "naam": "Lisa", "saldo": "30.00", "items": [["Product C", 15, 3]] },
+            "22500": { "naam": "Jelle", "saldo": "2098.00", "items": [["Starboard Isonic CR 2024 63", 1349, ""], ["Severne Mach 7 6.5 2024", 749, 1]] },
+            "18000": { "naam": "Haico", "saldo": "", "items": [["Starboard Futura 105 2024", 0, ""]] }
+        };
 
-            document.getElementById("result").innerHTML = `
-                <p>Marge: <strong>€${marge.toFixed(2)}</strong></p>
-                <p>Btw-bedrag (21% over marge): <strong>€${btwBedrag.toFixed(2)}</strong></p>
-                <p>Marge na aftrek btw: <strong>€${nettoMarge.toFixed(2)}</strong></p>
-            `;
+        function getStatusColor(code) {
+            switch(code) {
+                case 1: return "green";
+                case 2: return "red";
+                case 3: return "orange";
+                default: return "black";
+            }
+        }
+
+        function toonSaldo() {
+            let klantnummer = document.getElementById("klantnummer").value.trim().replace(/\D/g, "");
+            let klant = saldoData[klantnummer];
+            
+            if (klant) {
+                document.querySelector(".naam").textContent = klant.naam;
+                document.querySelector(".bedrag").innerHTML = klant.saldo ? `<span style='font-size: 14px;'>€</span><span style='font-size: 16px;'>${Math.round(parseFloat(klant.saldo))},-</span>` : "";
+                
+                let productContainer = document.getElementById("productContainer");
+                productContainer.innerHTML = "";
+                klant.items.forEach(item => {
+                    let [name, price, colorCode] = item;
+                    let roundedPrice = Math.round(parseFloat(price));
+                    let color = getStatusColor(colorCode);
+                    
+                    let itemElement = document.createElement("p");
+                    itemElement.classList.add("item");
+                    itemElement.innerHTML = `
+                        <span class='item-name'>${name}</span>
+                        <span class='item-price'>${roundedPrice} <span class='status-circle' style='background-color: ${color};'></span></span>
+                    `;
+                    productContainer.appendChild(itemElement);
+                });
+                
+                document.getElementById("inputScreen").style.display = "none";
+                document.getElementById("saldoMessage").style.display = "block";
+                document.getElementById("saldoMessage").style.background = "white";
+                document.getElementById("saldoMessage").style.color = "black";
+            } else {
+                alert("Klantnummer niet gevonden. Probeer opnieuw.");
+            }
         }
     </script>
-
 </body>
 </html>

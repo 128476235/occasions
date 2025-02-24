@@ -93,12 +93,12 @@
       padding: 8px 0;
       border-bottom: 1px solid #ccc;
     }
+    /* Aangepast: item-name mag nu meerdere regels gebruiken zodat langere namen zichtbaar worden */
     .item-name {
       flex: 2;
       text-align: left;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      white-space: normal;
+      word-break: break-word;
       display: flex;
       align-items: center;
       gap: 5px;
@@ -202,4 +202,3 @@
   </script>
 </body>
 </html>
-

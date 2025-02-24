@@ -40,7 +40,7 @@
     }
     .card input {
       background: transparent;
-      border: none; /* Verwijderd de streep */
+      border: none; /* Verwijdert de streep */
       color: #fff;
       font-size: 16px; /* Kleinere tekst voor het kaartnummer */
       font-weight: bold;
@@ -54,7 +54,7 @@
     /* Styling voor de saldo boodschap container */
     .container {
       width: 100%;
-      max-width: 400px;
+      max-width: 320px;
       background: white;
       padding: 20px;
       border-radius: 12px;
@@ -68,23 +68,15 @@
       font-size: 20px;
       margin: 10px 0;
       display: flex;
-      align-items: center;
+      justify-content: space-between;
       width: 100%;
     }
-    .naam {
-      flex: 1;
+    .naam, .bedrag {
       font-weight: 700;
       font-size: 24px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      margin-right: 10px; /* Witruimte tussen de naam en het bedrag */
-    }
-    .bedrag {
-      font-weight: 700;
-      font-size: 24px;
-      white-space: nowrap;
-      flex-shrink: 0;
     }
     .product-container {
       margin-top: 15px;
@@ -95,15 +87,14 @@
       font-size: 16px;
       color: black;
       display: flex;
-      justify-content: space-between;
       align-items: center;
       gap: 10px;
       padding: 8px 0;
       border-bottom: 1px solid #ccc;
     }
-    /* Productnamen mogen nu over meerdere regels indien nodig */
+    /* Geef de productnaam meer ruimte en laat deze over meerdere regels afbreken indien nodig */
     .item-name {
-      flex: 2;
+      flex: 3;
       text-align: left;
       white-space: normal;
       word-break: break-word;
@@ -111,6 +102,7 @@
       align-items: center;
       gap: 5px;
     }
+    /* Zorg dat er voldoende witruimte tussen de productnaam en de prijs is */
     .item-price {
       flex: 1;
       text-align: right;
@@ -128,6 +120,18 @@
       display: inline-block;
       margin-left: 5px;
     }
+    /* Op mobiele schermen: verklein de tekst iets zodat 10 producten goed zichtbaar blijven */
+    @media (max-width: 400px) {
+      .item {
+        font-size: 14px;
+      }
+      .saldo-text {
+        font-size: 18px;
+      }
+      .naam, .bedrag {
+        font-size: 20px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -139,10 +143,7 @@
   
   <!-- Container voor het tonen van de saldo boodschap -->
   <div id="saldoMessage" class="container" style="display: none;">
-    <p class="saldo-text">
-      <span class="naam"></span>
-      <span class="bedrag"></span>
-    </p>
+    <p class="saldo-text"><span class="naam"></span> <span class="bedrag"></span></p>
     <div class="product-container" id="productContainer"></div>
   </div>
   

@@ -6,18 +6,18 @@
     <title>Saldo Checker</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Poppins', sans-serif; text-align: center; margin: 50px; background-color: #f8f9fa; color: black; }
-        input { margin: 20px auto; padding: 8px; font-size: 14px; border: 2px solid black; border-radius: 5px; width: 6cm; background-color: black; color: black; display: block; text-align: center; }
+        body { font-family: 'Poppins', sans-serif; text-align: center; margin: 20px; background-color: #f8f9fa; color: black; }
+        input { margin: 10px auto; padding: 8px; font-size: 14px; border: 2px solid black; border-radius: 5px; width: 100%; max-width: 300px; background-color: black; color: white; display: block; text-align: center; }
         input:focus { outline: none; color: white; }
-        .container { width: 8.6cm; height: 5.4cm; margin: 50px auto; background: black; padding: 10px; border-radius: 10px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); text-align: center; display: flex; flex-direction: column; justify-content: center; position: relative; color: black; transition: background 0.3s ease; }
-        .saldo-text { font-size: 16px; margin: 5px 0; display: flex; justify-content: space-between; }
-        .naam { font-weight: 700; font-size: 20px; text-align: left; }
-        .bedrag { font-weight: 400; font-size: 20px; color: black; text-align: right; }
-        .product-container { margin-top: 10px; padding-top: 5px; border-top: 3px solid black; text-align: left; }
-        .item { font-weight: 400; font-size: 14px; color: black; display: flex; justify-content: space-between; align-items: center; margin: 2px 0; }
-        .item-name { text-align: left; display: flex; align-items: center; }
-        .status-circle { width: 8px; height: 8px; border-radius: 50%; margin-left: 8px; display: inline-block; }
-        .item-price { text-align: right; display: flex; align-items: center; }
+        .container { width: 100%; max-width: 600px; margin: 20px auto; background: white; padding: 15px; border-radius: 10px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); text-align: center; display: flex; flex-direction: column; align-items: center; }
+        .saldo-text { font-size: 16px; margin: 5px 0; display: flex; justify-content: space-between; width: 100%; }
+        .naam, .bedrag { font-weight: 700; font-size: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .product-container { margin-top: 10px; width: 100%; }
+        .item { font-weight: 400; font-size: 14px; color: black; display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 5px 0; border-bottom: 1px solid #ccc; }
+        .item-name { flex: 2; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 5px; }
+        .item-price { flex: 1; text-align: right; white-space: nowrap; }
+        .item-color-right { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+        .link-icon { width: 10px; height: 10px; display: inline-block; margin-left: 5px; }
     </style>
 </head>
 <body>
@@ -25,67 +25,74 @@
         <input type="text" id="klantnummer" placeholder="Kaartnummer" class="kaartnummer" oninput="checkInputLength()">
     </div>
     
-    <div id="saldoMessage" class="container" style="display: none; background: white; color: black;">
+    <div id="saldoMessage" class="container" style="display: none;">
         <p class="saldo-text"><span class="naam"></span> <span class="bedrag"></span></p>
         <div class="product-container" id="productContainer"></div>
     </div>
     
     <script>
+        let saldoData = {};
+        
+        async function fetchSaldoData() {
+            const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTRzczBGpxOcZcQHLLsnKP6SnkG3Np7fuew33Jy_4JyYKoyqkctuLGzCRechKWfQn94mhllfN7wPz7n/pub?output=csv";
+            const response = await fetch(url);
+            const csvText = await response.text();
+            const rows = csvText.split("\n").map(row => row.split(","));
+            
+            for (let i = 1; i < rows.length; i++) {
+                let [klantnummer, naam, saldo, ...items] = rows[i];
+                saldoData[klantnummer.trim()] = {
+                    naam: naam.trim(),
+                    saldo: saldo.trim(),
+                    items: []
+                };
+                
+                for (let j = 0; j < items.length; j += 4) {
+                    let product = items[j] ? items[j].trim() : "";
+                    let price = items[j + 1] && items[j + 1].trim() !== "" ? `€${items[j + 1].trim()}` : "";
+                    let color = items[j + 2] && items[j + 2].trim() !== "" ? items[j + 2].trim() : "transparent";
+                    let link = items[j + 3] ? items[j + 3].trim() : "";
+                    saldoData[klantnummer.trim()].items.push({ product, price: price.includes("NaN") ? "" : price, color, link });
+                }
+            }
+        }
+        
         function checkInputLength() {
             let inputField = document.getElementById('klantnummer');
             if (inputField.value.length >= 5) {
                 toonSaldo();
             }
         }
-
-        let saldoData = {
-            "12345": { "naam": "Jan", "saldo": "50.00", "items": [["Product A", 10, 1], ["Product B", 20, 2]] },
-            "67890": { "naam": "Lisa", "saldo": "30.00", "items": [["Product C", 15, 3]] },
-            "22500": { "naam": "Jelle", "saldo": "2098.00", "items": [["Starboard Isonic CR 2024 63", 1349, ""], ["Severne Mach 7 6.5 2024", 749, 1]] },
-            "18000": { "naam": "Haico", "saldo": "", "items": [["Starboard Futura 105 2024", 0, ""]] }
-        };
-
-        function getStatusColor(code) {
-            switch(code) {
-                case 1: return "green";
-                case 2: return "red";
-                case 3: return "orange";
-                default: return "black";
-            }
-        }
-
+        
         function toonSaldo() {
             let klantnummer = document.getElementById("klantnummer").value.trim().replace(/\D/g, "");
             let klant = saldoData[klantnummer];
             
             if (klant) {
                 document.querySelector(".naam").textContent = klant.naam;
-                document.querySelector(".bedrag").innerHTML = klant.saldo ? `<span style='font-size: 14px;'>€</span><span style='font-size: 16px;'>${Math.round(parseFloat(klant.saldo))},-</span>` : "";
+                document.querySelector(".bedrag").innerHTML = klant.saldo && !isNaN(klant.saldo) ? `€${Math.round(parseFloat(klant.saldo))}` : "";
                 
                 let productContainer = document.getElementById("productContainer");
                 productContainer.innerHTML = "";
-                klant.items.forEach(item => {
-                    let [name, price, colorCode] = item;
-                    let roundedPrice = Math.round(parseFloat(price));
-                    let color = getStatusColor(colorCode);
-                    
-                    let itemElement = document.createElement("p");
-                    itemElement.classList.add("item");
-                    itemElement.innerHTML = `
-                        <span class='item-name'>${name}</span>
-                        <span class='item-price'>${roundedPrice} <span class='status-circle' style='background-color: ${color};'></span></span>
-                    `;
-                    productContainer.appendChild(itemElement);
+                klant.items.slice(0, 5).forEach((item) => {
+                    if (item.product) {
+                        let productName = item.link ? `<a href='${item.link}' target='_blank' style='color: inherit; text-decoration: none;'>${item.product}</a>` : item.product;
+                        let linkIcon = item.link ? `<a href='${item.link}' target='_blank'><img src='https://cdn-icons-png.flaticon.com/512/25/25284.png' alt='🔗' class='link-icon'></a>` : "";
+                        let itemElement = document.createElement("div");
+                        itemElement.classList.add("item");
+                        itemElement.innerHTML = `<span class='item-name'>${productName} ${linkIcon}</span><span class='item-price'>${item.price}</span><span class='item-color-right' style='background:${item.color};'></span>`;
+                        productContainer.appendChild(itemElement);
+                    }
                 });
                 
                 document.getElementById("inputScreen").style.display = "none";
                 document.getElementById("saldoMessage").style.display = "block";
-                document.getElementById("saldoMessage").style.background = "white";
-                document.getElementById("saldoMessage").style.color = "black";
             } else {
                 alert("Klantnummer niet gevonden. Probeer opnieuw.");
             }
         }
+        
+        fetchSaldoData();
     </script>
 </body>
 </html>

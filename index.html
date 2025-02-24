@@ -68,15 +68,23 @@
       font-size: 20px;
       margin: 10px 0;
       display: flex;
-      justify-content: space-between;
+      align-items: center;
       width: 100%;
     }
-    .naam, .bedrag {
+    .naam {
+      flex: 1;
       font-weight: 700;
       font-size: 24px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      margin-right: 10px; /* Witruimte tussen de naam en het bedrag */
+    }
+    .bedrag {
+      font-weight: 700;
+      font-size: 24px;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
     .product-container {
       margin-top: 15px;
@@ -93,7 +101,7 @@
       padding: 8px 0;
       border-bottom: 1px solid #ccc;
     }
-    /* Aangepast: item-name mag nu meerdere regels gebruiken zodat langere namen zichtbaar worden */
+    /* Productnamen mogen nu over meerdere regels indien nodig */
     .item-name {
       flex: 2;
       text-align: left;
@@ -131,7 +139,10 @@
   
   <!-- Container voor het tonen van de saldo boodschap -->
   <div id="saldoMessage" class="container" style="display: none;">
-    <p class="saldo-text"><span class="naam"></span> <span class="bedrag"></span></p>
+    <p class="saldo-text">
+      <span class="naam"></span>
+      <span class="bedrag"></span>
+    </p>
     <div class="product-container" id="productContainer"></div>
   </div>
   

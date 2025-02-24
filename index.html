@@ -6,22 +6,23 @@
     <title>Saldo Checker</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Poppins', sans-serif; text-align: center; margin: 20px; background-color: #f8f9fa; color: black; }
-        input { margin: 10px auto; padding: 8px; font-size: 14px; border: 2px solid black; border-radius: 5px; width: 100%; max-width: 300px; background-color: black; color: white; display: block; text-align: center; }
+        body { font-family: 'Poppins', sans-serif; text-align: center; margin: 0; background-color: #f8f9fa; color: black; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
+        input { margin: 10px auto; padding: 12px; font-size: 16px; font-weight: bold; border: 2px solid black; border-radius: 5px; width: 100%; max-width: 320px; background-color: black; color: white; display: block; text-align: center; }
         input:focus { outline: none; color: white; }
-        .container { width: 100%; max-width: 600px; margin: 20px auto; background: white; padding: 15px; border-radius: 10px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); text-align: center; display: flex; flex-direction: column; align-items: center; }
-        .saldo-text { font-size: 16px; margin: 5px 0; display: flex; justify-content: space-between; width: 100%; }
-        .naam, .bedrag { font-weight: 700; font-size: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .product-container { margin-top: 10px; width: 100%; }
-        .item { font-weight: 400; font-size: 14px; color: black; display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 5px 0; border-bottom: 1px solid #ccc; }
+        .container { width: 100%; max-width: 600px; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); text-align: center; display: flex; flex-direction: column; align-items: center; }
+        .saldo-text { font-size: 18px; margin: 10px 0; display: flex; justify-content: space-between; width: 100%; }
+        .naam, .bedrag { font-weight: 700; font-size: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .product-container { margin-top: 15px; width: 100%; }
+        .item { font-weight: 400; font-size: 16px; color: black; display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #ccc; }
         .item-name { flex: 2; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 5px; }
         .item-price { flex: 1; text-align: right; white-space: nowrap; }
-        .item-color-right { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+        .item-color-right { width: 14px; height: 14px; border-radius: 50%; display: inline-block; }
         .link-icon { width: 10px; height: 10px; display: inline-block; margin-left: 5px; }
     </style>
 </head>
 <body>
     <div id="inputScreen" class="container">
+        <h2>Voer je kaartnummer in</h2>
         <input type="text" id="klantnummer" placeholder="Kaartnummer" class="kaartnummer" oninput="checkInputLength()">
     </div>
     

@@ -179,7 +179,7 @@
         
         let productContainer = document.getElementById("productContainer");
         productContainer.innerHTML = "";
-        klant.items.slice(0, 5).forEach((item) => {
+        klant.items.slice(0, 10).forEach((item) => {
           if (item.product) {
             let productName = item.link ? `<a href='${item.link}' target='_blank' style='color: inherit; text-decoration: none;'>${item.product}</a>` : item.product;
             let linkIcon = item.link ? `<a href='${item.link}' target='_blank'><img src='https://cdn-icons-png.flaticon.com/512/25/25284.png' alt='🔗' class='link-icon'></a>` : "";
@@ -202,3 +202,4 @@
   </script>
 </body>
 </html>
+
